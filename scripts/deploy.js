@@ -14,7 +14,7 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const PurchaseToken = await hre.ethers.getContractFactory("PurchaseToken");
+  const PurchaseToken = await hre.ethers.getContractFactory("NalndaToken");
   const purchaseToken = await PurchaseToken.deploy();
 
   await purchaseToken.deployed();

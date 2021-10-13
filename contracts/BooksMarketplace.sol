@@ -2,44 +2,44 @@
 pragma solidity ^0.8.0;
 
 import "./BooksNFT.sol";
-import "./PurchaseToken.sol";
+import "./NalndaToken.sol";
 
 contract BooksMarketplace {
 
-    PurchaseToken private _token;
+    NalndaToken private _token;
     BooksNFT private _book;
 
-    address private _organiser;
+    address private _author;
 
-    constructor(PurchaseToken token, BooksNFT book) {
+    constructor(NalndaToken token, BooksNFT book) {
         _token = token;
         _book = book;
-        _organiser = _book.getOrganiser();
+        _author = _book.getAuthor();
     }
 
     event Purchase(address indexed buyer, address seller, uint256 ticketId);
 
-    // Purchase tickets from the organiser directly
-    function purchaseTicket() public {
+    // Purchase book from the author directly
+    function purchaseBook() public {
         address buyer = msg.sender;
 
-        _token.transferFrom(buyer, _organiser, _book.getBookPrice());
+        _token.transferFrom(buyer, _author, _book.getBookPrice());
 
         _book.transferBook(buyer);
     }
 
-    // Purchase ticket from the secondary market hosted by organiser
-    function secondaryPurchase(uint256 ticketId) public {
-        address seller = _book.ownerOf(ticketId);
+    // Purchase book from the secondary market hosted by the author
+    function secondaryPurchase(uint256 bookId) public {
+        address seller = _book.ownerOf(bookId);
         address buyer = msg.sender;
-        uint256 sellingPrice = _book.getSellingPrice(ticketId);
+        uint256 sellingPrice = _book.getSellingPrice(bookId);
         uint256 commision = (sellingPrice * 10) / 100;
 
         _token.transferFrom(buyer, seller, sellingPrice - commision);
-        _token.transferFrom(buyer, _organiser, commision);
+        _token.transferFrom(buyer, _author, commision);
 
-        _book.secondaryTransferBooks(buyer, ticketId);
+        _book.secondaryTransferBooks(buyer, bookId);
 
-        emit Purchase(buyer, seller, ticketId);
+        emit Purchase(buyer, seller, bookId);
     }
 }

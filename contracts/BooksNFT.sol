@@ -20,11 +20,10 @@ contract BooksNFT is Context, AccessControl, ERC721 {
         bool forSale;
     }
 
-    address private _organiser;
+    address private _author;
     address[] private customers;
     uint256[] private bookCopyForSale;
     uint256 private _bookPrice;
-    uint256 private _totalSupply;
 
     mapping(uint256 => BookSaleDetails) private _bookSaleDetails;
     mapping(address => uint256[]) private purchasedBookCopies;
@@ -33,27 +32,17 @@ contract BooksNFT is Context, AccessControl, ERC721 {
         string memory bookName,
         string memory BookSymbol,
         uint256 bookPrice,
-        uint256 totalSupply,
-        address organiser
+        address author
     ) ERC721(bookName, BookSymbol) {
-        _setupRole(MINTER_ROLE, organiser);
+        _setupRole(MINTER_ROLE, author);
 
         _bookPrice = bookPrice;
-        _totalSupply = totalSupply;
-        _organiser = organiser;
+        _author = author;
     }
 
     // Function to fix "Derived contract must override function" error
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
-    }
-
-    modifier isValidBookCount {
-        require(
-            _bookCopyIds.current() < _totalSupply,
-            "Maximum copies limit exceeded!"
-        );
-        _;
     }
 
     modifier isMinterRole {
@@ -101,13 +90,13 @@ contract BooksNFT is Context, AccessControl, ERC721 {
 
     /*
      * Bulk mint specified number of book copies to assign it to a operator
-     * Modifier to check the copies count is less than total supply
+     * 
      */
     function bulkMintBookCopies(uint256 numOfBookCopies, address operator)
         public
         virtual
-        isValidBookCount
     {
+        // Important so that no one runs the for loop like too many times
         require(
             (bookCounts() + numOfBookCopies) <= 1000,
             "Number of book copies exceeds maximum copies count"
@@ -177,7 +166,7 @@ contract BooksNFT is Context, AccessControl, ERC721 {
     /*
      * Add books for sale with its details
      * Validate that the selling price shouldn't exceed 110% of purchase price
-     * Organiser can not use secondary market sale
+     * Author can not use secondary market sale
      */
     function setSaleDetails(
         uint256 bookCopyId,
@@ -191,7 +180,7 @@ contract BooksNFT is Context, AccessControl, ERC721 {
             "Re-selling price is more than 110%"
         );
 
-        // Should not be an organiser
+        // Should not be an author
         require(
             !hasRole(MINTER_ROLE, _msgSender()),
             "Functionality only allowed for secondary market"
@@ -212,9 +201,9 @@ contract BooksNFT is Context, AccessControl, ERC721 {
         return _bookPrice;
     }
 
-    // Get organiser's address
-    function getOrganiser() public view returns (address) {
-        return _organiser;
+    // Get author's address
+    function getAuthor() public view returns (address) {
+        return _author;
     }
 
     // Get current book copy id

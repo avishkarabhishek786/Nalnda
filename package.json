@@ -1,5 +1,16 @@
 {
-  "name": "hardhat-project",
+  "name": "books-marketplace-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hardhat.config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abhishek Sinha",
+  "license": "ISC",
   "devDependencies": {
     "@openzeppelin/contracts": "^4.0.0",
     "@nomiclabs/hardhat-ethers": "^2.0.2",

@@ -22,7 +22,7 @@ contract MarketplaceFactory is Ownable {
 
     // Creates new NFT and a marketplace for its purchase
     function LaunchNewBook(
-        PurchaseToken token,
+        NalndaToken token,
         string memory bookName,
         string memory bookSymbol,
         uint256 bookPrice,
@@ -33,7 +33,6 @@ contract MarketplaceFactory is Ownable {
                 bookName,
                 bookSymbol,
                 bookPrice,
-                totalSupply,
                 msg.sender
             );
 
